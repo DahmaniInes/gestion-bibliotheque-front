@@ -1,0 +1,97 @@
+<div class="container">
+    <h1>Modifier un événement</h1>
+    <div *ngIf="loading" class="loading">Chargement...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+    <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" *ngIf="!loading && !error">
+      <div class="form-group">
+        <label for="title">Titre de l'événement *</label>
+        <input type="text" id="title" formControlName="title" required>
+        <div *ngIf="eventForm.get('title')?.invalid && eventForm.get('title')?.touched" class="error">
+          Le titre est requis.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" formControlName="description"></textarea>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-col">
+          <label for="eventDate">Date de début *</label>
+          <input type="datetime-local" id="eventDate" formControlName="eventDate" required>
+          <div *ngIf="eventForm.get('eventDate')?.invalid && eventForm.get('eventDate')?.touched" class="error">
+            La date de début est requise.
+          </div>
+        </div>
+        <div class="form-col">
+          <label for="endDate">Date de fin *</label>
+          <input type="datetime-local" id="endDate" formControlName="endDate" required>
+          <div *ngIf="eventForm.get('endDate')?.invalid && eventForm.get('endDate')?.touched" class="error">
+            La date de fin est requise.
+          </div>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="location">Lieu *</label>
+        <input type="text" id="location" formControlName="location" required>
+        <div *ngIf="eventForm.get('location')?.invalid && eventForm.get('location')?.touched" class="error">
+          Le lieu est requis.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="image">Lien de l'image (optionnel)</label>
+        <input type="url" id="image" formControlName="image" placeholder="https://example.com/image.jpg">
+        <div *ngIf="eventForm.get('image')?.invalid && eventForm.get('image')?.touched" class="error">
+          Veuillez entrer une URL valide (ex: https://example.com/image.jpg).
+        </div>
+        <img *ngIf="eventForm.get('image')?.value && eventForm.get('image')?.valid" [src]="eventForm.get('image')?.value" alt="Image Preview" class="image-preview">
+      </div>
+  
+      <div class="form-row">
+        <div class="form-col">
+          <label for="maxParticipants">Nombre maximum de participants *</label>
+          <input type="number" id="maxParticipants" formControlName="maxParticipants" min="1" required>
+          <div *ngIf="eventForm.get('maxParticipants')?.invalid && eventForm.get('maxParticipants')?.touched" class="error">
+            Le nombre maximum de participants doit être supérieur à 0.
+          </div>
+        </div>
+        <div class="form-col">
+          <label for="priceCents">Prix (en centimes) *</label>
+          <input type="number" id="priceCents" formControlName="priceCents" min="0" required>
+          <div *ngIf="eventForm.get('priceCents')?.invalid && eventForm.get('priceCents')?.touched" class="error">
+            Le prix doit être supérieur ou égal à 0.
+          </div>
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="status">Statut *</label>
+        <select id="status" formControlName="status" required>
+          <option value="A_VENIR">À venir</option>
+          <option value="EN_COURS">En cours</option>
+          <option value="TERMINE">Terminé</option>
+        </select>
+        <div *ngIf="eventForm.get('status')?.invalid && eventForm.get('status')?.touched" class="error">
+          Le statut est requis.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="resourceFile">Ressource (optionnel)</label>
+        <div class="file-input-container">
+          <label class="file-input-label">Choisir un fichier
+            <input type="file" id="resourceFile" (change)="onFileSelected($event)" class="file-input">
+          </label>
+          <span class="file-name">{{ fileName || 'Aucun fichier sélectionné' }}</span>
+        </div>
+      </div>
+  
+      <div class="buttons-container">
+        <button type="button" class="btn btn-secondary" (click)="onCancel()">Annuler</button>
+        <button type="submit" class="btn" [disabled]="eventForm.invalid">Enregistrer les modifications</button>
+      </div>
+    </form>
+  </div>

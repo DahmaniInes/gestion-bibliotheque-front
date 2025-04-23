@@ -1,0 +1,66 @@
+<div class="event-admin-container">
+  <div class="event-admin-header">
+    <h1>Gestion des événements</h1>
+    <button class="btn btn-primary" routerLink="/add-event">
+      <i class="fas fa-plus"></i> Ajouter un événement
+    </button>
+  </div>
+
+  <div class="search-filter">
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Rechercher un événement..."
+        [value]="searchTerm"
+        (input)="onSearchChange($event)"
+      />
+      <i class="fas fa-search"></i>
+    </div>
+    <div class="filter-box">
+      <select [value]="statusFilter" (change)="onStatusFilterChange($event)">
+        <option value="ALL">Tous les statuts</option>
+        <option value="A_VENIR">À venir</option>
+        <option value="EN_COURS">En cours</option>
+        <option value="TERMINE">Terminé</option>
+        <option value="ANNULE">Annulé</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="event-list">
+    <div *ngFor="let event of filteredEvents | slice: (page - 1) * pageSize : page * pageSize" class="event-card">
+      <div class="event-image" [style.background-image]="event.image ? 'url(' + event.image + ')' : 'url(https://www.carquefou.fr/medias/2020/11/livre-scaled.jpg)'">
+        <div class="event-status" [ngClass]="getStatusClass(event.status)">
+          {{ getStatusText(event.status) }}
+        </div>
+      </div>
+      <div class="event-details">
+        <h3>{{ event.title }}</h3>
+        <div class="event-info">
+          <p><i class="fas fa-calendar"></i> {{ formatDate(event.eventDate) }}</p>
+          <p><i class="fas fa-map-marker-alt"></i> {{ event.location }}</p>
+          <p><i class="fas fa-users"></i> {{ event.participantsCount }}/{{ event.maxParticipants }} participants</p>
+          <p><i class="fas fa-euro-sign"></i> {{ formatPrice(event.priceCents) }}</p>
+        </div>
+        <div class="event-actions">
+          <button class="btn-icon btn-edit" title="Modifier" (click)="editEvent(event.id)">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-icon btn-delete" title="Supprimer" (click)="deleteEvent(event.id)">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button class="page-btn" [disabled]="page === 1" (click)="changePage(page - 1)">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <span class="page-info">Page {{ page }} sur {{ totalPages }}</span>
+    <button class="page-btn" [disabled]="page === totalPages" (click)="changePage(page + 1)">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</div>

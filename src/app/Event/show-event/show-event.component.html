@@ -1,0 +1,94 @@
+<div class="event-container" *ngIf="!loading && !error && event">
+    <div class="event-header">
+      <div class="event-status" [ngClass]="{
+        'active': event.status === 'A_VENIR' || event.status === 'EN_COURS',
+        'pending': event.status === 'A_VENIR',
+        'cancelled': event.status === 'ANNULE'
+      }">{{ event.status }}</div>
+      <h1 class="event-title">{{ event.title }}</h1>
+      <div class="event-price">
+        {{ event.priceCents === 0 ? 'Gratuit' : (event.priceCents / 100 | number:'1.2-2') + ' €' }}
+      </div>
+    </div>
+    
+    <div class="event-body">
+      <div class="event-info-card">
+        <div class="event-info-section">
+          <div class="info-row">
+            <div class="info-icon">
+              <i class="fas fa-calendar"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Date</div>
+              <div class="info-value">{{ event.eventDate | date:'d MMMM yyyy à HH:mm' }}</div>
+              <div class="info-detail">jusqu'à {{ event.endDate | date:'HH:mm' }}</div>
+            </div>
+          </div>
+          
+          <div class="info-row">
+            <div class="info-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Lieu</div>
+              <div class="info-value">{{ event.location }}</div>
+            </div>
+          </div>
+          
+          <div class="info-row">
+            <div class="info-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Participants</div>
+              <div class="info-value">{{ event.participantsCount }} / {{ event.maxParticipants }}</div>
+              <div class="participation-bar">
+                <div class="participation-progress" [style.width.%]="event.maxParticipants > 0 ? (event.participantsCount / event.maxParticipants) * 100 : 0"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-row" *ngIf="event.resourceLink">
+            <div class="info-icon">
+              <i class="fas fa-video"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Lien de l'événement</div>
+              <a [href]="event.resourceLink" class="resource-link" target="_blank">Rejoindre la réunion</a>
+            </div>
+          </div>
+          
+          <div class="info-row" *ngIf="event.resourceFileName">
+            <div class="info-icon">
+              <i class="fas fa-file-pdf"></i>
+            </div>
+            <div class="info-content">
+              <div class="info-label">Document</div>
+              <a [href]="event.resourceFileName" class="resource-link" target="_blank">{{ event.resourceFileName }}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="event-description-card">
+        <h2>À propos de cet événement</h2>
+        <div class="event-description">{{ event.description || 'No description available' }}</div>
+        
+        <div class="action-buttons">
+          <button class="btn-register" *ngIf="event.priceCents === 0">S'inscrire à l'événement</button>
+          <button class="btn-register" *ngIf="event.priceCents > 0">Payer</button>
+          <button class="btn-share">
+            <i class="fas fa-share-alt"></i> Partager
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="event-container" *ngIf="loading">
+    <p>Loading event...</p>
+  </div>
+  
+  <div class="event-container" *ngIf="error">
+    <p class="error">{{ error }}</p>
+  </div>
