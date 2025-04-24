@@ -30,4 +30,15 @@ export class EventService {
   removeEvenement(id: string): Observable<void> {
     return this.http.delete<void>(`${this.endpoint}/${id}`);
   }
+
+
+  createPaymentIntent(id: number, paymentMethodId: string): Observable<{ client_secret: string; status: string }> {
+    const params = new URLSearchParams();
+    params.append('paymentMethodId', paymentMethodId);
+    return this.http.post<{ client_secret: string; status: string }>(
+      `${this.endpoint}/${id}/payment`,
+      params.toString(),
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    );
+  }
 }

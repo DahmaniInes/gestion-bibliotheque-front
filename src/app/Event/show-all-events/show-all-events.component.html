@@ -21,7 +21,6 @@
   </div>
 
   <div class="events-grid">
-    <!-- Iterate over events -->
     <div *ngFor="let event of events" class="event-card">
       <div class="event-image" [style.background-image]="event.image ? 'url(' + event.image + ')' : 'url(https://www.carquefou.fr/medias/2020/11/livre-scaled.jpg)'">
         <div class="event-date">
@@ -59,8 +58,8 @@
           </div>
         </div>
         <div class="event-actions">
-          <button class="btn-pay" [ngClass]="{'disabled': event.status === 'ANNULE'}" *ngIf="event.priceCents > 0">
-            <i class="fas fa-credit-card"></i> Payer
+          <button class="btn-pay" [ngClass]="{'disabled': event.status === 'ANNULE' || paymentProcessing}" *ngIf="event.priceCents > 0" (click)="initiatePayment(event.id)">
+            <i class="fas fa-credit-card"></i> {{ paymentProcessing && selectedEventId === event.id ? 'Traitement...' : 'Payer' }}
           </button>
           <button class="btn-register" *ngIf="event.priceCents === 0">
             <i class="fas fa-user-plus"></i> S'inscrire
@@ -81,5 +80,20 @@
     <span class="page-dots">...</span>
     <button class="page-btn">8</button>
     <button class="page-btn next"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</div>
+
+<!-- Modale de paiement -->
+<div class="payment-modal" *ngIf="showPaymentModal">
+  <div class="modal-content">
+    <h2>Paiement pour l'événement</h2>
+    <div id="card-element" class="card-element"></div>
+    <div id="card-errors" role="alert" class="error-message"></div>
+    <div class="modal-actions">
+      <button class="btn-confirm" [disabled]="paymentProcessing" (click)="confirmPayment()">
+        {{ paymentProcessing ? 'Traitement...' : 'Confirmer le paiement' }}
+      </button>
+      <button class="btn-cancel" (click)="closePaymentModal()">Annuler</button>
+    </div>
   </div>
 </div>
