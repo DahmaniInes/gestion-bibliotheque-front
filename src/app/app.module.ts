@@ -8,6 +8,9 @@ import { FooterComponent } from './Components/footer/footer.component';
 import { HomeComponent } from './home/home.component';
 import { Routes } from '@angular/router';
 import { TestComponent } from './test/test.component';
+import { FormsModule } from '@angular/forms';
+import { StockComponent } from './Components/stock/stock.component';
+import { BookComponent } from './Components/book/book.component';
 
 
 
@@ -20,11 +23,12 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, FooterComponent, HomeComponent, TestComponent],
+  declarations: [AppComponent, HeaderComponent, FooterComponent, HomeComponent, TestComponent,StockComponent,BookComponent],
   imports: [
     BrowserModule,
     HttpClientModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule
   ],
   bootstrap: [AppComponent]
 })
