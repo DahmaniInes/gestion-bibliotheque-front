@@ -1,0 +1,49 @@
+<div class="container">
+    <h1>📚 Stock Management</h1>
+  
+    <!-- Search & Report Section -->
+    <div class="top-bar">
+      <input [(ngModel)]="query" placeholder="Search Google Books..." />
+      <button (click)="search()">🔍</button>
+      <button class="download" (click)="downloadReport()">⬇️ PDF Report</button>
+    </div>
+  
+    <!-- Form -->
+    <form (ngSubmit)="submitForm()" class="stock-form">
+      <input [(ngModel)]="form.bookTitle" name="title" placeholder="Book Title" required />
+      <input [(ngModel)]="form.author" name="author" placeholder="Author" required />
+      <input [(ngModel)]="form.quantity" name="quantity" type="number" placeholder="Quantity" required />
+      <input [(ngModel)]="form.available" name="available" type="number" placeholder="Available" required />
+      <input [(ngModel)]="form.reserved" name="reserved" type="number" placeholder="Reserved" required />
+      <button type="submit">{{ form.id ? 'Update' : 'Add' }} Stock</button>
+      <button type="button" *ngIf="form.id" (click)="resetForm()" class="cancel">Cancel</button>
+    </form>
+  
+    <!-- Stock List -->
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Qty</th>
+          <th>Available</th>
+          <th>Reserved</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stock of stocks">
+          <td>{{ stock.bookTitle }}</td>
+          <td>{{ stock.author }}</td>
+          <td>{{ stock.quantity }}</td>
+          <td>{{ stock.available }}</td>
+          <td>{{ stock.reserved }}</td>
+          <td>
+            <button (click)="editStock(stock)">✏️</button>
+            <button (click)="deleteStock(stock.id!)">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

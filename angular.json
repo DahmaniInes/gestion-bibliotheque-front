@@ -40,6 +40,7 @@
                 "src/assets/js/custom.js",
                 "src/assets/js/animation.js",
                 "src/assets/js/imagesloaded.js"
+
               ]
           },
           "configurations": {

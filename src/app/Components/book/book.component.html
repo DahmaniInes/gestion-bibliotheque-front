@@ -1,0 +1,41 @@
+<div class="book-container">
+    <h1>📚 Gestion des Livres</h1>
+  
+    <form class="book-form" (ngSubmit)="isEditMode ? onUpdateLivre() : onCreateLivre()">
+      <div class="form-grid">
+        <input type="text" [(ngModel)]="livre.titre" name="titre" placeholder="Titre" required />
+        <input type="text" [(ngModel)]="livre.isbn" name="isbn" placeholder="ISBN" required />
+        <input type="number" [(ngModel)]="livre.anneePublication" name="anneePublication" placeholder="Année" required />
+        <input type="text" [(ngModel)]="livre.editeur" name="editeur" placeholder="Éditeur" required />
+        <input type="number" [(ngModel)]="livre.nombrePages" name="nombrePages" placeholder="Pages" required />
+        <input type="number" [(ngModel)]="livre.prix" name="prix" placeholder="Prix (€)" required />
+        <input type="number" [(ngModel)]="livre.stockDisponible" name="stockDisponible" placeholder="Stock" required />
+        <input type="text" [(ngModel)]="livre.imageCouverture" name="imageCouverture" placeholder="Image URL" required />
+      </div>
+      <textarea [(ngModel)]="livre.resume" name="resume" placeholder="Résumé..." rows="3" required></textarea>
+  
+      <div class="form-buttons">
+        <button type="submit">{{ isEditMode ? '✏️ Modifier' : '➕ Ajouter' }}</button>
+        <button type="button" class="cancel" *ngIf="isEditMode" (click)="resetForm()">❌ Annuler</button>
+      </div>
+    </form>
+  
+    <div class="book-grid">
+      <div class="book-card" *ngFor="let livre of livres">
+        <img [src]="livre.imageCouverture" alt="couverture" />
+        <div class="book-info">
+          <h3>{{ livre.titre }}</h3>
+          <p><strong>ISBN:</strong> {{ livre.isbn }}</p>
+          <p><strong>Éditeur:</strong> {{ livre.editeur }}</p>
+          <p><strong>Prix:</strong> {{ livre.prix }} €</p>
+          <p><strong>Stock:</strong> {{ livre.stockDisponible }}</p>
+          <p class="resume">{{ livre.resume }}</p>
+          <div class="card-actions">
+            <button (click)="onEditLivre(livre)">✏️ Modifier</button>
+            <button class="delete" (click)="onDeleteLivre(livre.id!)">🗑️ Supprimer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
