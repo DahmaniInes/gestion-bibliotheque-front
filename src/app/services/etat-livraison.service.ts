@@ -1,17 +1,39 @@
-// src/app/services/etat-livraison.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { EtatLivraison } from '../models/etat-livraison.model';
 import { Observable } from 'rxjs';
+import { EtatLivraison } from '../models/etat-livraison.model';
 
-const API = 'http://localhost:8093/api/etat-livraisons';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class EtatLivraisonService {
-  constructor(private http: HttpClient) {}
+  private apiUrl = 'http://localhost:8093/livraisons/api/etat-livraisons'; // URL du gateway
 
-  getAll(): Observable<EtatLivraison[]> {
-    return this.http.get<EtatLivraison[]>(API);
+  constructor(private http: HttpClient) { }
+
+  /** Récupère tous les états de livraison */
+  getAllEtatLivraisons(): Observable<EtatLivraison[]> {
+    return this.http.get<EtatLivraison[]>(this.apiUrl);
   }
-  // getById, create, update, delete → même pattern que pour LivreurService
+
+  /** Récupère un état de livraison par ID */
+  getEtatLivraisonById(id: number): Observable<EtatLivraison> {
+    return this.http.get<EtatLivraison>(`${this.apiUrl}/${id}`);
+  }
+
+  /** Crée un nouvel état de livraison */
+  createEtatLivraison(etatLivraison: EtatLivraison): Observable<EtatLivraison> {
+    return this.http.post<EtatLivraison>(this.apiUrl, etatLivraison);
+  }
+
+  /** Met à jour un état de livraison existant */
+  updateEtatLivraison(id: number, etatLivraison: EtatLivraison): Observable<EtatLivraison> {
+    return this.http.put<EtatLivraison>(`${this.apiUrl}/${id}`, etatLivraison);
+  }
+
+  /** Supprime un état de livraison */
+  deleteEtatLivraison(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }

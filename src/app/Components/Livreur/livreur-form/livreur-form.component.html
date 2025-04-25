@@ -1,1 +1,71 @@
-<p>livreur-form works!</p>
+<div class="container">
+  <h2>{{ isEditMode ? 'Modifier le Livreur' : 'Créer un Livreur' }}</h2>
+  <form [formGroup]="livreurForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="nom">Nom</label>
+      <input
+        type="text"
+        id="nom"
+        formControlName="nom"
+        class="form-control"
+        [class.is-invalid]="nom?.invalid && (nom?.dirty || nom?.touched)"
+      >
+      <div *ngIf="nom?.invalid && (nom?.dirty || nom?.touched)" class="invalid-feedback">
+        <div *ngIf="nom?.errors?.['required']">Le nom est requis.</div>
+        <div *ngIf="nom?.errors?.['minlength']">Le nom doit contenir au moins 2 caractères.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="prenom">Prénom</label>
+      <input
+        type="text"
+        id="prenom"
+        formControlName="prenom"
+        class="form-control"
+        [class.is-invalid]="prenom?.invalid && (prenom?.dirty || prenom?.touched)"
+      >
+      <div *ngIf="prenom?.invalid && (prenom?.dirty || prenom?.touched)" class="invalid-feedback">
+        <div *ngIf="prenom?.errors?.['required']">Le prénom est requis.</div>
+        <div *ngIf="prenom?.errors?.['minlength']">Le prénom doit contenir au moins 2 caractères.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="telephone">Téléphone</label>
+      <input
+        type="text"
+        id="telephone"
+        formControlName="telephone"
+        class="form-control"
+        [class.is-invalid]="telephone?.invalid && (telephone?.dirty || telephone?.touched)"
+      >
+      <div *ngIf="telephone?.invalid && (telephone?.dirty || telephone?.touched)" class="invalid-feedback">
+        <div *ngIf="telephone?.errors?.['required']">Le téléphone est requis.</div>
+        <div *ngIf="telephone?.errors?.['pattern']">Le téléphone doit contenir entre 8 et 15 chiffres.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        formControlName="email"
+        class="form-control"
+        [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)"
+      >
+      <div *ngIf="email?.invalid && (email?.dirty || email?.touched)" class="invalid-feedback">
+        <div *ngIf="email?.errors?.['required']">L'email est requis.</div>
+        <div *ngIf="email?.errors?.['email']">Veuillez entrer un email valide.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary" [disabled]="livreurForm.invalid">
+        {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+      </button>
+      <button type="button" class="btn btn-secondary ms-2" (click)="cancel()">Annuler</button>
+    </div>
+  </form>
+</div>

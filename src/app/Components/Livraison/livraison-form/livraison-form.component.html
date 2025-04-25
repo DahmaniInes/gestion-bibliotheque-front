@@ -1,70 +1,121 @@
-<!-- src/app/components/livraison/livraison-form/livraison-form.component.html -->
-<div class="form-wrapper">
-    <h2>Nouvelle Livraison</h2>
-    <form [formGroup]="form" (ngSubmit)="submit()">
-  
-      <div class="row">
-        <label>
-          Date & heure
-          <input type="datetime-local" formControlName="dateLivraison"/>
-        </label>
-  
-        <label>
-          N° de commande
-          <input type="number" formControlName="commandeId"/>
-        </label>
+<div class="container">
+  <h2>{{ isEditMode ? 'Modifier la Livraison' : 'Créer une Livraison' }}</h2>
+  <form [formGroup]="livraisonForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="dateLivraison">Date de Livraison</label>
+      <input
+        type="datetime-local"
+        id="dateLivraison"
+        formControlName="dateLivraison"
+        class="form-control"
+        [class.is-invalid]="dateLivraison?.invalid && (dateLivraison?.dirty || dateLivraison?.touched)"
+      >
+      <div *ngIf="dateLivraison?.invalid && (dateLivraison?.dirty || dateLivraison?.touched)" class="invalid-feedback">
+        <div *ngIf="dateLivraison?.errors?.['required']">La date de livraison est requise.</div>
       </div>
-  
-      <div class="row">
-        <label>
-          Adresse de livraison
-          <input type="text" formControlName="adresseLivraison"/>
-        </label>
-  
-        <label>
-          Téléphone client
-          <input type="tel" formControlName="telephoneClient"/>
-        </label>
+    </div>
+
+    <div class="form-group">
+      <label for="commandeId">ID de la Commande</label>
+      <input
+        type="number"
+        id="commandeId"
+        formControlName="commandeId"
+        class="form-control"
+        [class.is-invalid]="commandeId?.invalid && (commandeId?.dirty || commandeId?.touched)"
+      >
+      <div *ngIf="commandeId?.invalid && (commandeId?.dirty || commandeId?.touched)" class="invalid-feedback">
+        <div *ngIf="commandeId?.errors?.['required']">L'ID de la commande est requis.</div>
       </div>
-  
-      <div class="row">
-        <label>
-          Méthode de paiement
-          <input type="text" formControlName="methodePaiement"/>
-        </label>
-  
-        <label>
-          Montant total (DT)
-          <input type="number" formControlName="prixTotal" step="0.01"/>
-        </label>
+    </div>
+
+    <div class="form-group">
+      <label for="adresseLivraison">Adresse de Livraison</label>
+      <input
+        type="text"
+        id="adresseLivraison"
+        formControlName="adresseLivraison"
+        class="form-control"
+        [class.is-invalid]="adresseLivraison?.invalid && (adresseLivraison?.dirty || adresseLivraison?.touched)"
+      >
+      <div *ngIf="adresseLivraison?.invalid && (adresseLivraison?.dirty || adresseLivraison?.touched)" class="invalid-feedback">
+        <div *ngIf="adresseLivraison?.errors?.['required']">L'adresse de livraison est requise.</div>
       </div>
-  
-      <!--  <div class="row">
-        <label>
-          Livreur
-          <select formControlName="livreurId">
-          <option [ngValue]="null">-- Sélectionnez --</option>
-            <option *ngFor="let l of livreurs" [ngValue]="l.id"> 
-            {{ l.prenom }} {{ l.nom }}
-            </option>
-          </select>
-        </label> -->
-  
-       <!--   <label>
-          État
-          <select formControlName="etatLivraisonId">
-            <option [ngValue]="null">-- Sélectionnez --</option>
-            <option *ngFor="let e of etats" [ngValue]="e.id">
-              {{ e.libelle }}
-            </option>
-          </select>
-        </label> 
-      </div> -->
-  
-      <div class="actions">
-        <button type="submit" [disabled]="form.invalid">Créer</button>
-        <button type="button" (click)="cancel()">Annuler</button>
+    </div>
+
+    <div class="form-group">
+      <label for="telephoneClient">Téléphone du Client</label>
+      <input
+        type="text"
+        id="telephoneClient"
+        formControlName="telephoneClient"
+        class="form-control"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="methodePaiement">Méthode de Paiement</label>
+      <input
+        type="text"
+        id="methodePaiement"
+        formControlName="methodePaiement"
+        class="form-control"
+        [class.is-invalid]="methodePaiement?.invalid && (methodePaiement?.dirty || methodePaiement?.touched)"
+      >
+      <div *ngIf="methodePaiement?.invalid && (methodePaiement?.dirty || methodePaiement?.touched)" class="invalid-feedback">
+        <div *ngIf="methodePaiement?.errors?.['required']">La méthode de paiement est requise.</div>
       </div>
-    </form>
-  </div>
-  
+    </div>
+
+    <div class="form-group">
+      <label for="prixTotal">Prix Total</label>
+      <input
+        type="number"
+        id="prixTotal"
+        formControlName="prixTotal"
+        class="form-control"
+        [class.is-invalid]="prixTotal?.invalid && (prixTotal?.dirty || prixTotal?.touched)"
+      >
+      <div *ngIf="prixTotal?.invalid && (prixTotal?.dirty || prixTotal?.touched)" class="invalid-feedback">
+        <div *ngIf="prixTotal?.errors?.['required']">Le prix total est requis.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="livreur">Livreur</label>
+      <select
+        id="livreur"
+        formControlName="livreur"
+        class="form-control"
+        [class.is-invalid]="livreur?.invalid && (livreur?.dirty || livreur?.touched)"
+      >
+        <option *ngFor="let livreur of livreurs" [value]="livreur.id">{{ livreur.nom }} {{ livreur.prenom }}</option>
+      </select>
+      <div *ngIf="livreur?.invalid && (livreur?.dirty || livreur?.touched)" class="invalid-feedback">
+        <div *ngIf="livreur?.errors?.['required']">Le livreur est requis.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="etatLivraison">État de Livraison</label>
+      <select
+        id="etatLivraison"
+        formControlName="etatLivraison"
+        class="form-control"
+        [class.is-invalid]="etatLivraison?.invalid && (etatLivraison?.dirty || etatLivraison?.touched)"
+      >
+        <option *ngFor="let etat of etatLivraisons" [value]="etat.id">{{ etat.libelle }}</option>
+      </select>
+      <div *ngIf="etatLivraison?.invalid && (etatLivraison?.dirty || etatLivraison?.touched)" class="invalid-feedback">
+        <div *ngIf="etatLivraison?.errors?.['required']">L'état de livraison est requis.</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <button type="submit" class="btn btn-primary" [disabled]="livraisonForm.invalid">
+        {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cancel()">Annuler</button>
+    </div>
+  </form>
+</div>
