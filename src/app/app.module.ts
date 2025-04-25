@@ -15,6 +15,8 @@ import { AddEventComponent } from './Event/add-event/add-event.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ShowEventAdminComponent } from './Event/show-event-admin/show-event-admin.component';
 import { EditEventComponent } from './Event/edit-event/edit-event.component';
+import { PaymentSuccessComponent } from './Event/payment-success/payment-success.component';
+import { PaymentCancelComponent } from './Event/payment-cancel/payment-cancel.component';
 
 
 
@@ -32,7 +34,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, FooterComponent, HomeComponent, TestComponent, ShowEventComponent, ShowAllEventsComponent, AddEventComponent, ShowEventAdminComponent, EditEventComponent],
+  declarations: [AppComponent, HeaderComponent, FooterComponent, HomeComponent, TestComponent, ShowEventComponent, ShowAllEventsComponent, AddEventComponent, ShowEventAdminComponent, EditEventComponent, PaymentSuccessComponent, PaymentCancelComponent],
   imports: [
     BrowserModule,
     HttpClientModule,

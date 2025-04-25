@@ -1,45 +1,67 @@
-import { Component, OnInit, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { EventService } from '../../services/event.service';
 import { Event } from '../../models/event';
 import { EventStatus } from '../../models/EventStatus';
-import { loadStripe, Stripe, StripeElements, StripeCardElement } from '@stripe/stripe-js';
+import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { environment } from '../../environment';
+import { PaymentStatusService } from '../../services/payment-status.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-show-all-events',
   templateUrl: './show-all-events.component.html',
   styleUrls: ['./show-all-events.component.css']
 })
-export class ShowAllEventsComponent implements OnInit, AfterViewInit {
+export class ShowAllEventsComponent implements OnInit, OnDestroy {
   events: Event[] = [];
   stripe: Stripe | null = null;
   paymentProcessing = false;
   selectedEventId: number | null = null;
-  showPaymentModal = false;
-  card: StripeCardElement | null = null;
-  elements: StripeElements | null = null;
+  paidEventIds: Set<number> = new Set();
+  private paymentSubscription: Subscription | null = null;
 
-  constructor(private eventService: EventService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private eventService: EventService,
+    private cdr: ChangeDetectorRef,
+    private paymentStatusService: PaymentStatusService
+  ) {}
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     console.log('ngOnInit: Initialisation du composant');
-    try {
-      this.stripe = await loadStripe(environment.stripePublicKey);
-      console.log('ngOnInit: Stripe chargé avec succès');
-      if (this.stripe) {
-        this.elements = this.stripe.elements();
-      }
-    } catch (error) {
-      console.error('ngOnInit: Erreur lors du chargement de Stripe:', error);
-      alert('Erreur lors du chargement de Stripe');
+    // Load paid event IDs from localStorage
+    const storedPaidEvents = localStorage.getItem('paidEventIds');
+    if (storedPaidEvents) {
+      this.paidEventIds = new Set(JSON.parse(storedPaidEvents));
+      console.log('ngOnInit: Loaded paidEventIds from localStorage:', [...this.paidEventIds]);
     }
+
+    // Initialize Stripe
+    loadStripe(environment.stripePublicKey)
+      .then(stripe => {
+        this.stripe = stripe;
+        console.log('ngOnInit: Stripe chargé avec succès');
+      })
+      .catch(error => {
+        console.error('ngOnInit: Erreur lors du chargement de Stripe:', error);
+        alert('Erreur lors du chargement de Stripe');
+      });
+
+    // Load events
     this.loadEvents();
+
+    // Subscribe to payment success events
+    this.paymentSubscription = this.paymentStatusService.paymentSuccess$.subscribe(eventId => {
+      console.log('Payment success received for eventId:', eventId);
+      this.markEventAsPaid(eventId);
+      this.loadEvents(); // Refresh events to update participant count
+      this.cdr.detectChanges(); // Ensure UI updates
+    });
   }
 
-  ngAfterViewInit(): void {
-    // Ensure card element is mounted after modal is rendered
-    if (this.showPaymentModal && this.elements) {
-      this.setupCardElement();
+  ngOnDestroy(): void {
+    if (this.paymentSubscription) {
+      this.paymentSubscription.unsubscribe();
+      console.log('ngOnDestroy: Unsubscribed from paymentSuccess$');
     }
   }
 
@@ -64,6 +86,7 @@ export class ShowAllEventsComponent implements OnInit, AfterViewInit {
           status: event.status || EventStatus.A_VENIR
         }));
         console.log('loadEvents: Événements transformés:', this.events);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('loadEvents: Erreur lors du chargement des événements:', error);
@@ -88,154 +111,74 @@ export class ShowAllEventsComponent implements OnInit, AfterViewInit {
 
   async initiatePayment(eventId: number): Promise<void> {
     console.log('initiatePayment: Début du processus de paiement pour eventId:', eventId);
-    if (!this.stripe || !this.elements) {
+    if (!this.stripe) {
       console.error('initiatePayment: Stripe.js non initialisé');
       alert('Erreur : Stripe non initialisé');
       return;
     }
 
+    // Prevent payment if already paid
+    if (this.paidEventIds.has(eventId)) {
+      console.log('initiatePayment: Événement déjà payé:', eventId);
+      return;
+    }
+
     this.paymentProcessing = true;
     this.selectedEventId = eventId;
-    this.showPaymentModal = true;
-    this.cdr.detectChanges(); // Force DOM update for modal
-    console.log('initiatePayment: Modale de paiement ouverte, paymentProcessing:', this.paymentProcessing);
+    this.cdr.detectChanges(); // Update UI to show processing state
+    console.log('initiatePayment: Appel au backend pour créer une session Checkout');
 
-    // Setup card element after modal is rendered
-    this.setupCardElement();
-  }
-
-  private setupCardElement(): void {
-    if (!this.elements) {
-      console.error('setupCardElement: Stripe Elements non initialisé');
-      return;
-    }
-
-    console.log('setupCardElement: Création de l\'élément carte');
-    this.card = this.elements.create('card');
-    const cardElement = document.getElementById('card-element');
-    if (cardElement) {
-      this.card.mount('#card-element');
-      console.log('setupCardElement: Élément carte monté avec succès');
-    } else {
-      console.error('setupCardElement: #card-element non trouvé dans le DOM');
-      alert('Erreur : Impossible d\'afficher le formulaire de paiement');
-      this.closePaymentModal();
-      return;
-    }
-
-    this.card.on('change', (event) => {
-      const errorElement = document.getElementById('card-errors');
-      if (errorElement) {
-        errorElement.textContent = event.error ? event.error.message : '';
-        console.log('setupCardElement: Événement de changement de carte:', event);
-      }
-    });
-  }
-
-  async confirmPayment(): Promise<void> {
-    console.log('confirmPayment: Début de la confirmation du paiement pour eventId:', this.selectedEventId);
-    if (!this.stripe || !this.card || !this.selectedEventId) {
-      console.error('confirmPayment: Stripe, card ou eventId non défini');
-      alert('Erreur : Configuration invalide');
-      this.closePaymentModal();
-      return;
-    }
-
-    console.log('confirmPayment: Création du PaymentMethod');
     try {
-      const paymentMethodResult = await this.stripe.createPaymentMethod({
-        type: 'card',
-        card: this.card,
-        billing_details: {
-          name: 'Client Name', // Replace with user input if available
-        },
-      });
-
-      if (paymentMethodResult.error) {
-        console.error('confirmPayment: Erreur lors de la création du PaymentMethod:', paymentMethodResult.error.message);
-        alert('Erreur : ' + paymentMethodResult.error.message);
-        this.closePaymentModal();
-        return;
-      }
-
-      const paymentMethodId = paymentMethodResult.paymentMethod.id;
-      console.log('confirmPayment: PaymentMethod créé avec ID:', paymentMethodId);
-
-      console.log('confirmPayment: Appel au backend pour créer un PaymentIntent');
-      this.eventService.createPaymentIntent(this.selectedEventId, paymentMethodId).subscribe({
+      // Call backend to create a Checkout session
+      this.eventService.createCheckoutSession(eventId).subscribe({
         next: async (response) => {
-          console.log('confirmPayment: Réponse du backend reçue:', response);
-          const { client_secret, status } = response;
+          console.log('initiatePayment: Session Checkout reçue:', response);
+          const { sessionId } = response;
 
-          if (status === 'requires_action' && client_secret) {
-            console.log('confirmPayment: Paiement nécessite une action supplémentaire (ex. 3D Secure)');
-            if (this.stripe) {
-              const actionResult = await this.stripe.handleCardAction(client_secret);
-              if (actionResult.error) {
-                console.error('confirmPayment: Erreur lors de l\'action supplémentaire:', actionResult.error.message);
-                alert('Erreur : ' + actionResult.error.message);
-                this.closePaymentModal();
-                return;
-              }
-              // Re-call createPaymentIntent with the same paymentMethodId to confirm
-              if (this.selectedEventId) {
-                this.eventService.createPaymentIntent(this.selectedEventId, paymentMethodId).subscribe({
-                  next: (finalResponse) => {
-                    this.handlePaymentSuccess(finalResponse);
-                  },
-                  error: (error) => {
-                    this.handlePaymentError(error);
-                  }
-                });
-              } else {
-                console.error('confirmPayment: selectedEventId est null');
-                alert('Erreur : ID de l\'événement manquant');
-                this.closePaymentModal();
-              }
-            } else {
-              console.error('confirmPayment: Stripe non initialisé');
-              alert('Erreur : Stripe non initialisé');
-              this.closePaymentModal();
-            }
-          } else {
-            this.handlePaymentSuccess(response);
+          // Redirect to Stripe Checkout
+          const result = await this.stripe!.redirectToCheckout({ sessionId });
+          if (result.error) {
+            console.error('initiatePayment: Erreur lors de la redirection vers Checkout:', result.error.message);
+            alert('Erreur : ' + result.error.message);
           }
+          this.paymentProcessing = false;
+          this.selectedEventId = null;
+          this.cdr.detectChanges();
         },
         error: (error) => {
-          this.handlePaymentError(error);
+          console.error('initiatePayment: Erreur lors de la création de la session Checkout:', error);
+          alert('Erreur lors de la création du paiement: ' + (error.error?.message || error.message || 'Erreur inconnue'));
+          this.paymentProcessing = false;
+          this.selectedEventId = null;
+          this.cdr.detectChanges();
         }
       });
     } catch (error) {
-      console.error('confirmPayment: Erreur générale:', error);
-      alert('Erreur lors de la confirmation du paiement');
-      this.closePaymentModal();
+      console.error('initiatePayment: Erreur générale:', error);
+      alert('Erreur lors du paiement');
+      this.paymentProcessing = false;
+      this.selectedEventId = null;
+      this.cdr.detectChanges();
     }
   }
 
-  private handlePaymentSuccess(response: { client_secret: string; status: string }): void {
-    console.log('handlePaymentSuccess: Paiement réussi, statut:', response.status);
-    alert('Paiement réussi !');
-    this.loadEvents(); // Refresh events
-    this.closePaymentModal();
+  isEventPaid(eventId: number): boolean {
+    const isPaid = this.paidEventIds.has(eventId);
+    console.log(`isEventPaid: Checking eventId ${eventId}, isPaid: ${isPaid}`);
+    return isPaid;
   }
 
-  private handlePaymentError(error: any): void {
-    console.error('handlePaymentError: Erreur lors de la création du PaymentIntent:', error);
-    alert('Erreur lors du paiement: ' + (error.error?.message || error.message || 'Erreur inconnue'));
-    this.closePaymentModal();
-  }
-
-  closePaymentModal(): void {
-    console.log('closePaymentModal: Fermeture de la modale de paiement');
-    this.showPaymentModal = false;
-    this.paymentProcessing = false;
-    this.selectedEventId = null;
-    if (this.card) {
-      console.log('closePaymentModal: Nettoyage de l\'élément carte');
-      this.card.destroy();
-      this.card = null;
-    }
+  markEventAsPaid(eventId: number): void {
+    console.log('markEventAsPaid: Marking event as paid, eventId:', eventId);
+    this.paidEventIds.add(eventId);
+    localStorage.setItem('paidEventIds', JSON.stringify([...this.paidEventIds]));
+    console.log('markEventAsPaid: Updated paidEventIds:', [...this.paidEventIds]);
     this.cdr.detectChanges();
-    console.log('closePaymentModal: paymentProcessing:', this.paymentProcessing);
+  }
+
+  // For debugging: Manually trigger markEventAsPaid
+  testMarkAsPaid(eventId: number): void {
+    console.log('testMarkAsPaid: Manually marking event as paid, eventId:', eventId);
+    this.markEventAsPaid(eventId);
   }
 }

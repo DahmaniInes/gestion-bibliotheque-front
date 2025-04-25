@@ -58,8 +58,12 @@
           </div>
         </div>
         <div class="event-actions">
-          <button class="btn-pay" [ngClass]="{'disabled': event.status === 'ANNULE' || paymentProcessing}" *ngIf="event.priceCents > 0" (click)="initiatePayment(event.id)">
-            <i class="fas fa-credit-card"></i> {{ paymentProcessing && selectedEventId === event.id ? 'Traitement...' : 'Payer' }}
+          <button class="btn-pay" 
+                  [ngClass]="{'disabled': event.status === 'ANNULE' || paymentProcessing || isEventPaid(event.id)}" 
+                  *ngIf="event.priceCents > 0" 
+                  (click)="initiatePayment(event.id)">
+            <i class="fas fa-credit-card"></i> 
+            {{ paymentProcessing && selectedEventId === event.id ? 'Traitement...' : (isEventPaid(event.id) ? 'Débloqué' : 'Payer') }}
           </button>
           <button class="btn-register" *ngIf="event.priceCents === 0">
             <i class="fas fa-user-plus"></i> S'inscrire
@@ -67,6 +71,8 @@
           <button class="btn-details" [routerLink]="['/event', event.id]">
             <i class="fas fa-eye"></i> Voir détails
           </button>
+          <!-- Debug button -->
+          <button class="btn-details" (click)="testMarkAsPaid(event.id)">Test Paid</button>
         </div>
       </div>
     </div>
@@ -80,20 +86,5 @@
     <span class="page-dots">...</span>
     <button class="page-btn">8</button>
     <button class="page-btn next"><i class="fas fa-chevron-right"></i></button>
-  </div>
-</div>
-
-<!-- Modale de paiement -->
-<div class="payment-modal" *ngIf="showPaymentModal">
-  <div class="modal-content">
-    <h2>Paiement pour l'événement</h2>
-    <div id="card-element" class="card-element"></div>
-    <div id="card-errors" role="alert" class="error-message"></div>
-    <div class="modal-actions">
-      <button class="btn-confirm" [disabled]="paymentProcessing" (click)="confirmPayment()">
-        {{ paymentProcessing ? 'Traitement...' : 'Confirmer le paiement' }}
-      </button>
-      <button class="btn-cancel" (click)="closePaymentModal()">Annuler</button>
-    </div>
   </div>
 </div>

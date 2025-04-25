@@ -32,13 +32,12 @@ export class EventService {
   }
 
 
-  createPaymentIntent(id: number, paymentMethodId: string): Observable<{ client_secret: string; status: string }> {
-    const params = new URLSearchParams();
-    params.append('paymentMethodId', paymentMethodId);
-    return this.http.post<{ client_secret: string; status: string }>(
-      `${this.endpoint}/${id}/payment`,
-      params.toString(),
-      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
-    );
+  createCheckoutSession(id: number): Observable<{ sessionId: string }> {
+    return this.http.post<{ sessionId: string }>(`${this.endpoint}/${id}/payment`, {});
+  }
+
+
+  confirmPayment(id: number): Observable<string> {
+    return this.http.post<string>(`${this.endpoint}/${id}/confirm-payment`, {});
   }
 }
