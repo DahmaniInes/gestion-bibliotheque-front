@@ -21,6 +21,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { CommandeComponent } from './commande/commande.component';
+import { AddEventComponent } from './Event/add-event/add-event.component';
+import { ShowAllEventsComponent } from './Event/show-all-events/show-all-events.component';
+import { ShowEventComponent } from './Event/show-event/show-event.component';
+import { EditEventComponent } from './Event/edit-event/edit-event.component';
+import { ShowEventAdminComponent } from './Event/show-event-admin/show-event-admin.component';
+import { PaymentCancelComponent } from './Event/payment-cancel/payment-cancel.component';
+import { PaymentSuccessComponent } from './Event/payment-success/payment-success.component';
 
 
 const routes: Routes = [
@@ -32,7 +39,14 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [AppComponent, HeaderComponent, FooterComponent, HomeComponent, TestComponent,StockComponent,BookComponent,PanierComponent, CommandeComponent],
+  declarations: [AppComponent, HeaderComponent, FooterComponent, HomeComponent, TestComponent,StockComponent,BookComponent,PanierComponent, CommandeComponent,  ShowEventComponent,
+    ShowAllEventsComponent,
+    AddEventComponent,
+    ShowEventAdminComponent,
+    EditEventComponent,
+    PaymentSuccessComponent,
+    PaymentCancelComponent],
+    
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -45,7 +59,8 @@ const routes: Routes = [
     MatSelectModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule,
+    MatIconModule
+   
   ],
   bootstrap: [AppComponent]
 })

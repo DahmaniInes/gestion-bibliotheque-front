@@ -1,0 +1,88 @@
+<div class="events-container">
+  <div class="events-header">
+    <h1>Événements à venir</h1>
+    <div class="events-filter">
+      <div class="filter-group">
+        <label>Filtrer par:</label>
+        <button class="filter-btn active">Tous</button>
+        <button class="filter-btn">Gratuits</button>
+        <button class="filter-btn">Premium</button>
+      </div>
+      <div class="sort-group">
+        <label>Trier par:</label>
+        <select class="sort-select">
+          <option>Date (plus récente)</option>
+          <option>Date (plus ancienne)</option>
+          <option>Prix (croissant)</option>
+          <option>Prix (décroissant)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="events-grid">
+    <div *ngFor="let event of events" class="event-card">
+      <div class="event-image" [style.background-image]="event.image ? 'url(' + event.image + ')' : 'url(https://www.carquefou.fr/medias/2020/11/livre-scaled.jpg)'">
+        <div class="event-date">
+          <div class="date-day">{{ event.eventDate | date:'dd' }}</div>
+          <div class="date-month">{{ event.eventDate | date:'MMM' | uppercase }}</div>
+        </div>
+        <div class="event-price" [ngClass]="{'premium': event.priceCents > 0, 'free': event.priceCents === 0}">
+          {{ event.priceCents === 0 ? 'Gratuit' : (event.priceCents / 100 | number:'1.2-2') + ' €' }}
+        </div>
+      </div>
+      <div class="event-content">
+        <div class="event-status" [ngClass]="{
+          'active': event.status === 'A_VENIR' || event.status === 'EN_COURS',
+          'pending': event.status === 'A_VENIR',
+          'cancelled': event.status === 'ANNULE',
+          'termine': event.status === 'TERMINE'
+        }">{{ event.status }}</div>
+        <h3 class="event-title">{{ event.title }}</h3>
+        <div class="event-meta">
+          <div class="meta-item">
+            <i class="fas fa-clock"></i>
+            <span>{{ event.eventDate | date:'HH:mm' }} - {{ event.endDate | date:'HH:mm' }}</span>
+          </div>
+          <div class="meta-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>{{ event.location }}</span>
+          </div>
+        </div>
+        <div class="event-capacity">
+          <div class="capacity-text">
+            <span class="capacity-count">{{ event.participantsCount }}</span> / {{ event.maxParticipants }} participants
+          </div>
+          <div class="capacity-bar">
+            <div class="capacity-progress" [style.width.%]="event.maxParticipants > 0 ? (event.participantsCount / event.maxParticipants) * 100 : 0"></div>
+          </div>
+        </div>
+        <div class="event-actions">
+          <button class="btn-pay" 
+                  [ngClass]="{'disabled': event.status === 'ANNULE' || paymentProcessing || isEventPaid(event.id)}" 
+                  *ngIf="event.priceCents > 0" 
+                  (click)="initiatePayment(event.id)">
+            <i class="fas fa-credit-card"></i> 
+            {{ paymentProcessing && selectedEventId === event.id ? 'Traitement...' : (isEventPaid(event.id) ? 'Débloqué' : 'Payer') }}
+          </button>
+          <button class="btn-register" *ngIf="event.priceCents === 0">
+            <i class="fas fa-user-plus"></i> S'inscrire
+          </button>
+          <button class="btn-details" [routerLink]="['/event', event.id]">
+            <i class="fas fa-eye"></i> Voir détails
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pagination">
+    <button class="page-btn prev"><i class="fas fa-chevron-left"></i></button>
+    <button class="page-btn active">1</button>
+    <button class="page-btn">2</button>
+    <button class="page-btn">3</button>
+    <span class="page-dots">...</span>
+    <button class="page-btn">8</button>
+    <button class="page-btn next"><i class="fas fa-chevron-right"></i></button>
+  </div>
+</div>
