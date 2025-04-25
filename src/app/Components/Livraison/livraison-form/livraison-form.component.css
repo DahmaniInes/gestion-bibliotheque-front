@@ -1,0 +1,75 @@
+/* livraison-form.component.css */
+.form-wrapper {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .form-wrapper h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  .form-wrapper form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1rem;
+  }
+  
+  .form-wrapper label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    color: #444;
+  }
+  
+  .form-wrapper input,
+  .form-wrapper select {
+    margin-top: 0.3rem;
+    padding: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    font-size: 1rem;
+  }
+  
+  .form-wrapper .actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .form-wrapper .actions button {
+    padding: 0.5rem 1rem;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-radius: 3px;
+  }
+  
+  .form-wrapper .actions button:first-child {
+    background: #28a745;
+    color: #fff;
+  }
+  
+  .form-wrapper .actions button:last-child {
+    background: #dc3545;
+    color: #fff;
+  }
+  
+  .form-wrapper .actions button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+  }
+  
+  @media (max-width: 600px) {
+    .form-wrapper form {
+      grid-template-columns: 1fr;
+    }
+  }
+  

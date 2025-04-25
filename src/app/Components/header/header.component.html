@@ -21,6 +21,27 @@
               <li *ngIf="!isHomePage"><a [routerLink]="['/']" fragment="pricing">Pricing</a></li>
               <li *ngIf="!isHomePage"><a [routerLink]="['/']" fragment="newsletter">Newsletter</a></li>
               <li>
+                <a 
+                  [routerLink]="['/livraisons']" 
+                  routerLinkActive="active">
+                  Livraisons
+                </a>
+              </li>
+              <li>
+                <a 
+                  [routerLink]="['/livreurs']" 
+                  routerLinkActive="active">
+                  Livreurs
+                </a>
+              </li>
+              <li>
+                <a 
+                  [routerLink]="['/etats']" 
+                  routerLinkActive="active">
+                  États
+                </a>
+              </li>
+              <li>
                 <div class="gradient-button">
                   <a id="modal_trigger" href="#modal"><i class="fa fa-sign-in-alt"></i> Sign In Now</a>
                 </div>

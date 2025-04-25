@@ -46,15 +46,9 @@
       nav: true,
       margin: 0,
       responsive: {
-        1200: {
-          items: 5
-        },
-        992: {
-          items: 3
-        },
-        760: {
-          items: 2
-        }
+        1200: { items: 5 },
+        992:  { items: 3 },
+        760:  { items: 2 }
       }
     });
   }
@@ -70,50 +64,40 @@
 
   // Gestion des formulaires de connexion/inscription
   $(function () {
-    // Calling Login Form
     $("#login_form").click(function () {
       $(".social_login").hide();
       $(".user_login").show();
       return false;
     });
-
-    // Calling Register Form
     $("#register_form").click(function () {
       $(".social_login").hide();
       $(".user_register").show();
       $(".header_title").text('Register');
       return false;
     });
-
-    // Going back to Social Forms
     $(".back_btn").click(function () {
-      $(".user_login").hide();
-      $(".user_register").hide();
+      $(".user_login, .user_register").hide();
       $(".social_login").show();
       $(".header_title").text('Login');
       return false;
     });
   });
 
-  // Acc
+  // Accordeon (naccs)
   $(document).on("click", ".naccs .menu div", function () {
-    var numberIndex = $(this).index();
-
-    if (!$(this).is("active")) {
-      $(".naccs .menu div").removeClass("active");
-      $(".naccs ul li").removeClass("active");
-
+    var idx = $(this).index();
+    if (!$(this).hasClass("active")) {
+      $(".naccs .menu div, .naccs ul li").removeClass("active");
       $(this).addClass("active");
-      $(".naccs ul").find("li:eq(" + numberIndex + ")").addClass("active");
-
-      var listItemHeight = $(".naccs ul")
-        .find("li:eq(" + numberIndex + ")")
-        .innerHeight();
-      $(".naccs ul").height(listItemHeight + "px");
+      $(".naccs ul")
+        .find("li:eq(" + idx + ")")
+        .addClass("active")
+        .end()
+        .height($(".naccs ul li:eq(" + idx + ")").innerHeight());
     }
   });
 
-  // Menu Dropdown Toggle
+  // Menu Dropdown Toggle (mobile)
   if ($('.menu-trigger').length) {
     $(".menu-trigger").on('click', function () {
       $(this).toggleClass('active');
@@ -121,57 +105,62 @@
     });
   }
 
-  // Menu elevator animation
-  $('.scroll-to-section a[href*=\\#]:not([href=\\#])').on('click', function () {
-    if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
-      var target = $(this.hash);
-      target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
-      if (target.length) {
-        var width = $(window).width();
-        if (width < 991) {
-          $('.menu-trigger').removeClass('active');
-          $('.header-area .nav').slideUp(200);
-        }
-        $('html,body').animate({
-          scrollTop: (target.offset().top) + 1
-        }, 700);
-        return false;
-      }
+  // Menu elevator animation (click)
+  $('.scroll-to-section a[href*="#"]:not([href="#"])').on('click', function (e) {
+    var hash = this.hash;
+    if (!hash || !hash.startsWith('#')) return;
+
+    var $target = $(hash);
+    if (!$target.length) return;
+
+    e.preventDefault();
+    if ($(window).width() < 991) {
+      $('.menu-trigger').removeClass('active');
+      $('.header-area .nav').slideUp(200);
     }
+    $('html, body').animate({
+      scrollTop: $target.offset().top + 1
+    }, 700);
   });
 
+  // Smoothscroll + activation onglet
   $(document).ready(function () {
     $(document).on("scroll", onScroll);
 
-    //smoothscroll
     $('.scroll-to-section a[href^="#"]').on('click', function (e) {
+      var hash = this.hash;
+      if (!hash || !hash.startsWith('#')) return;
+
+      var $target = $(hash);
+      if (!$target.length) return;
+
       e.preventDefault();
       $(document).off("scroll");
-
-      $('.scroll-to-section a').each(function () {
-        $(this).removeClass('active');
-      });
+      $('.scroll-to-section a').removeClass('active');
       $(this).addClass('active');
 
-      var target = this.hash,
-        menu = target;
-      var target = $(this.hash);
       $('html, body').stop().animate({
-        scrollTop: (target.offset().top) + 1
+        scrollTop: $target.offset().top + 1
       }, 500, 'swing', function () {
-        window.location.hash = target;
+        window.location.hash = hash;
         $(document).on("scroll", onScroll);
       });
     });
   });
 
-  function onScroll(event) {
+  // Fonction de détection du scroll pour activer les liens
+  function onScroll() {
     var scrollPos = $(document).scrollTop();
-    $('.nav a').each(function () {
+    $('.scroll-to-section a[href^="#"]').each(function () {
       var currLink = $(this);
-      var refElement = $(currLink.attr("href"));
-      if (refElement.position().top <= scrollPos && refElement.position().top + refElement.height() > scrollPos) {
-        $('.nav ul li a').removeClass("active");
+      var hash = this.hash;
+      if (!hash) return;
+
+      var $ref = $(hash);
+      if (!$ref.length) return;
+
+      if ($ref.offset().top <= scrollPos && $ref.offset().top + $ref.height() > scrollPos) {
+        $('.scroll-to-section a').removeClass("active");
         currLink.addClass("active");
       } else {
         currLink.removeClass("active");
@@ -179,25 +168,7 @@
     });
   }
 
-  // Acc (répété dans le code original, conservé ici)
-  $(document).on("click", ".naccs .menu div", function () {
-    var numberIndex = $(this).index();
-
-    if (!$(this).is("active")) {
-      $(".naccs .menu div").removeClass("active");
-      $(".naccs ul li").removeClass("active");
-
-      $(this).addClass("active");
-      $(".naccs ul").find("li:eq(" + numberIndex + ")").addClass("active");
-
-      var listItemHeight = $(".naccs ul")
-        .find("li:eq(" + numberIndex + ")")
-        .innerHeight();
-      $(".naccs ul").height(listItemHeight + "px");
-    }
-  });
-
-  // Page loading animation
+  // Page loading animation (préloader)
   $(window).on('load', function () {
     $('#js-preloader').addClass('loaded');
   });
@@ -212,7 +183,6 @@
       }
     });
   }
-
   mobileNav();
 
 })(window.jQuery);

@@ -1,0 +1,42 @@
+<div class="livraison-list">
+    <h2>Liste des livraisons</h2>
+  
+    <table class="livraison-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Date</th>
+          <th>Commande #</th>
+          <th>Adresse</th>
+          <th>Téléphone</th>
+          <th>Méthode paiement</th>
+          <th>Montant</th>
+          <th>Livreur</th>
+          <th>État</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let l of livraisons">
+          <td>{{ l.id }}</td>
+          <td>{{ l.dateLivraison | date:'short' }}</td>
+          <td>{{ l.commandeId }}</td>
+          <td>{{ l.adresseLivraison }}</td>
+          <td>{{ l.telephoneClient || '—' }}</td>
+          <td>{{ l.methodePaiement }}</td>
+          <td>{{ l.prixTotal | number:'1.2-2' }} DT</td>
+          <td>{{ l.livreur.prenom }} {{ l.livreur.nom }}</td>
+          <td>{{ l.etatLivraison.libelle }}</td>
+          <td class="actions">
+          <a [routerLink]="['/livraisons', l.id]" title="Voir"><i class="fa fa-eye"></i></a>
+            <a [routerLink]="['/livraisons', l.id, 'edit']" title="Modifier"><i class="fa fa-edit"></i></a>
+            <a href="#" (click)="delete(l.id)" title="Supprimer"><i class="fa fa-trash"></i></a> 
+          </td>
+        </tr>
+        <tr *ngIf="livraisons.length===0">
+          <td colspan="10" class="no-data">Aucune livraison trouvée.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

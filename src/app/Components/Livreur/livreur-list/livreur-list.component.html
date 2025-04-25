@@ -1,0 +1,15 @@
+<!-- src/app/Components/Livreur/livreur-list/livreur-list.component.html -->
+<h2>Liste des livreurs</h2>
+<table>
+  <tr><th>Nom</th><th>Prénom</th><th>Email</th><th>#</th></tr>
+  <tr *ngFor="let l of livreurs">
+    <td>{{l.nom}}</td>
+    <td>{{l.prenom}}</td>
+    <td>{{l.email}}</td>
+    <td>
+      <a [routerLink]="['/livreurs', l.id]">Voir</a> |
+      <a [routerLink]="['/livreurs', l.id, 'edit']">Modifier</a>
+    </td>
+  </tr>
+</table>
+<a routerLink="/livreurs/new">+ Nouveau</a>
