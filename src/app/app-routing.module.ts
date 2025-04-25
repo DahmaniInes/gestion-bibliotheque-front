@@ -4,6 +4,8 @@ import { HomeComponent } from './home/home.component';
 import { TestComponent } from './test/test.component';
 import { StockComponent } from './Components/stock/stock.component';
 import { BookComponent } from './Components/book/book.component';
+import { PanierComponent } from './panier/panier.component';
+import { CommandeComponent } from './commande/commande.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -11,6 +13,8 @@ const routes: Routes = [
   { path: 'test', component: TestComponent },
   { path: 'stock', component: StockComponent },
   { path: 'books', component: BookComponent },
+  { path: 'paniers', component: PanierComponent },
+  { path: 'commandes', component: CommandeComponent },
 
   { path: '**', redirectTo: '' }
 ];

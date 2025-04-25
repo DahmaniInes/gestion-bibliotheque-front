@@ -1,0 +1,66 @@
+<div class="container">
+    <div class="form-card">
+      <h2>📝 {{ editMode ? 'Modifier le Panier' : 'Créer un Nouveau Panier' }}</h2>
+      <form [formGroup]="panierForm" (ngSubmit)="submit()">
+        <label>
+          👤 Client ID
+          <input type="number" formControlName="clientId" required />
+        </label>
+  
+        <label>
+          💵 Prix Total
+          <input type="number" formControlName="prixTotal" required />
+        </label>
+  
+        <label>
+          📦 Statut
+          <select formControlName="statut">
+            <option value="ACTIF">🟢 Actif</option>
+            <option value="VALIDE">✅ Validé</option>
+            <option value="ABANDONNE">❌ Abandonné</option>
+          </select>
+        </label>
+  
+        <div class="actions">
+          <button type="submit" class="btn primary">
+            {{ editMode ? '✏️ Modifier' : '➕ Ajouter' }}
+          </button>
+          <button type="button" *ngIf="editMode" (click)="resetForm()" class="btn cancel">
+            🔄 Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  
+    <div class="card">
+      <h2>📋 Liste des Paniers</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Client</th>
+            <th>Prix</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of paniers">
+            <td>{{ p.id }}</td>
+            <td>👤 {{ p.clientId }}</td>
+            <td>💰 {{ p.prixTotal }}€</td>
+            <td>
+              <span class="badge" [ngClass]="getBadgeClass(p.statut)">
+                {{ getStatusEmoji(p.statut) }} {{ p.statut }}
+              </span>
+            </td>
+            <td>
+              <button (click)="edit(p)" class="btn icon edit">✏️</button>
+              <button (click)="delete(p.id!)" class="btn icon delete">🗑️</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  

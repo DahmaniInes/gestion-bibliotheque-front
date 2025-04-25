@@ -1,0 +1,35 @@
+<div class="container">
+    <h2 class="title">📦 Gestion des Commandes</h2>
+  
+    <form (ngSubmit)="saveCommande()" class="form">
+      <input type="number" [(ngModel)]="newCommande.panierId" name="panierId" placeholder="🛒 ID Panier" required />
+      <input type="text" [(ngModel)]="newCommande.adresse" name="adresse" placeholder="🏠 Adresse" required />
+      <input type="date" [(ngModel)]="newCommande.dateCreation" name="dateCreation" required />
+      <select [(ngModel)]="newCommande.statut" name="statut" required>
+        <option *ngFor="let s of statutValues" [value]="s">{{ s }}</option>
+      </select>
+      <input type="text" [(ngModel)]="newCommande.methodePaiement" name="methodePaiement" placeholder="💳 Méthode Paiement" required />
+      <input type="text" [(ngModel)]="newCommande.phone" name="phone" placeholder="📱 Téléphone" required />
+      <input type="email" [(ngModel)]="newCommande.email" name="email" placeholder="📧 Email" required />
+  
+      <button type="submit">{{ isEditMode ? '✏️ Modifier' : '➕ Ajouter' }}</button>
+    </form>
+  
+    <div class="cards">
+      <div class="card" *ngFor="let commande of commandes">
+        <p>🆔 ID: {{ commande.id }}</p>
+        <p>🛒 Panier ID: {{ commande.panierId }}</p>
+        <p>🏠 Adresse: {{ commande.adresse }}</p>
+        <p>📅 Date: {{ commande.dateCreation }}</p>
+        <p>🚚 Statut: {{ commande.statut }}</p>
+        <p>💳 Paiement: {{ commande.methodePaiement }}</p>
+        <p>📱 Téléphone: {{ commande.phone }}</p>
+        <p>📧 Email: {{ commande.email }}</p>
+        <div class="actions">
+          <button (click)="editCommande(commande)">✏️</button>
+          <button (click)="deleteCommande(commande.id!)">🗑️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
