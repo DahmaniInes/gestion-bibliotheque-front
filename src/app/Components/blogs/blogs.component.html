@@ -1,0 +1,74 @@
+<section class="services" aria-labelledby="blog-heading">
+    <div class="container">
+      <div class="section-heading text-center" id="blog-heading">
+        <h4>Explore Our <em>Blog</em></h4>
+        <img src="assets/images/line-dec.png" alt="" aria-hidden="true">
+        <p>Browse the latest posts and filter by category to find what interests you.</p>
+      </div>
+      <div class="filter-section">
+        <form class="filter-form" aria-label="Filter posts by category">
+          <div class="form-group">
+            <label for="category-filter" class="visually-hidden">Filter by Category</label>
+            <select id="category-filter" [(ngModel)]="selectedCategoryId" (ngModelChange)="filterPosts()" name="categoryId" class="form-control" aria-describedby="category-help">
+              <option value="">All Categories</option>
+              <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}</option>
+            </select>
+            <small id="category-help" class="form-text">Select a category to filter posts.</small>
+          </div>
+        </form>
+      </div>
+      <div class="loading-spinner" *ngIf="isLoading" aria-live="polite">
+        <div class="spinner"></div>
+        <p>Loading posts...</p>
+      </div>
+      <div class="row" role="list">
+        <article class="col-md-4 col-sm-6 grid-item" *ngFor="let post of posts; let i = index" role="listitem" @cardAnimation>
+          <div class="service-item first-service" tabindex="0" (keydown)="handleCardKeydown($event, post.id!)">
+            <div class="icon" aria-hidden="true"></div>
+            <h4>{{ post.title }}</h4>
+            <p class="post-excerpt">{{ post.content | slice:0:120 }}...</p>
+            <p class="post-meta">
+              <small>By {{ post.author || 'Unknown' }} | {{ post.category?.name || 'Uncategorized' }}</small>
+            </p>
+            <img *ngIf="post.imageUrl" [src]="'http://localhost:8081' + post.imageUrl" alt="{{ post.title }}" class="post-image">
+            <div class="text-button">
+              <a href="javascript:void(0)" (click)="toggleComments(post.id!)" role="button" [attr.aria-expanded]="showComments[post.id!] ? 'true' : 'false'">
+                {{ showComments[post.id!] ? 'Hide Comments' : 'View Comments' }} <i class="fas fa-arrow-right"></i>
+              </a>
+            </div>
+            <div class="comments-section" *ngIf="showComments[post.id!]" @commentAnimation>
+              <h4>Comments</h4>
+              <div *ngIf="!comments[post.id!] || comments[post.id!].length === 0" class="no-comments">No comments yet. Be the first!</div>
+              <div class="comment" *ngFor="let comment of comments[post.id!]">
+                <p>{{ comment.content }}</p>
+                <p class="comment-meta"><small>By {{ comment.username || 'Anonymous' }}</small></p>
+              </div>
+              <h4>Add a Comment</h4>
+              <form (ngSubmit)="addComment(post.id!)" [attr.aria-label]="'Add a comment for ' + post.title">
+                <div class="form-group">
+                  <label for="username-{{post.id}}" class="form-label">Your Name</label>
+                  <input id="username-{{post.id}}" type="text" [(ngModel)]="newComment.username" name="username-{{post.id}}" placeholder="Your name" class="form-control" required aria-required="true">
+                </div>
+                <div class="form-group">
+                  <label for="content-{{post.id}}" class="form-label">Your Comment</label>
+                  <textarea id="content-{{post.id}}" [(ngModel)]="newComment.content" name="content-{{post.id}}" placeholder="Write your comment..." class="form-control" required aria-required="true"></textarea>
+                </div>
+                <div class="gradient-button">
+                  <button type="submit" [disabled]="!newComment.content || !newComment.username" [attr.aria-disabled]="!newComment.content || !newComment.username ? 'true' : 'false'">Post Comment</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </article>
+      </div>
+      <nav class="pagination text-center" aria-label="Blog post pagination">
+        <div class="border-button">
+          <a href="javascript:void(0)" [class.disabled]="page === 0" (click)="onPageChange(page - 1)" role="button" aria-label="Previous page">Previous</a>
+        </div>
+        <span aria-current="page">Page {{ page + 1 }} of {{ totalPages }}</span>
+        <div class="border-button">
+          <a href="javascript:void(0)" [class.disabled]="page >= totalPages - 1" (click)="onPageChange(page + 1)" role="button" aria-label="Next page">Next</a>
+        </div>
+      </nav>
+    </div>
+  </section>

@@ -15,7 +15,7 @@ const routes: Routes = [
   { path: 'books', component: BookComponent },
   { path: 'paniers', component: PanierComponent },
   { path: 'commandes', component: CommandeComponent },
-
+  { path: '', loadChildren: () => import('./Components/blogs/blogs.module').then(m => m.BlogModule) },
   { path: '**', redirectTo: '' }
 ];
 

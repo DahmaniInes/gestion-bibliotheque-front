@@ -1,0 +1,45 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Categories</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+      <h3>Add Category</h3>
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input matInput [(ngModel)]="newCategory.name" placeholder="Name" required>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Description</mat-label>
+        <input matInput [(ngModel)]="newCategory.description" placeholder="Description">
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="createCategory()" [disabled]="!newCategory.name">Add</button>
+    </div>
+    <div *ngIf="categories.length === 0">No categories found.</div>
+    <ul>
+      <li *ngFor="let category of categories">
+        <div *ngIf="!editingCategory || editingCategory.id !== category.id">
+          {{ category.name }} - {{ category.description || 'No description' }}
+          <button mat-icon-button (click)="editCategory(category)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteCategory(category.id)" [disabled]="!category.id">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <div *ngIf="editingCategory && editingCategory.id === category.id">
+          <mat-form-field>
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="editingCategory.name" placeholder="Name" required>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Description</mat-label>
+            <input matInput [(ngModel)]="editingCategory.description" placeholder="Description">
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="updateCategory()" [disabled]="!editingCategory.name">Save</button>
+          <button mat-raised-button (click)="cancelEdit()">Cancel</button>
+        </div>
+      </li>
+    </ul>
+  </mat-card-content>
+</mat-card>

@@ -23,6 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommandeComponent } from './commande/commande.component';
 
 
+
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },

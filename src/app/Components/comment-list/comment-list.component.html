@@ -1,0 +1,71 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Comments</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+      <h3>Add Comment</h3>
+      <mat-form-field>
+        <mat-label>Content</mat-label>
+        <textarea matInput [(ngModel)]="newComment.content" placeholder="Content" required></textarea>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input matInput [(ngModel)]="newComment.username" placeholder="Username">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Select Post</mat-label>
+        <mat-select [(ngModel)]="selectedPostId" required>
+          <mat-option value="">Select Post</mat-option>
+          <mat-option *ngFor="let post of posts" [value]="post.id">{{ post.title }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="createComment()" [disabled]="!selectedPostId || !newComment.content">Add</button>
+    </div>
+    <div>
+      <h3>Filter by Post</h3>
+      <mat-form-field>
+        <mat-label>Filter by Post</mat-label>
+        <mat-select [(ngModel)]="selectedPostId" (selectionChange)="getCommentsByPost()">
+          <mat-option value="">All Comments</mat-option>
+          <mat-option *ngFor="let post of posts" [value]="post.id">{{ post.title }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div *ngIf="comments.length === 0">No comments found.</div>
+    <ul>
+      <li *ngFor="let comment of comments">
+        <div *ngIf="!editingComment || editingComment.id !== comment.id">
+          <p>{{ comment.content }}</p>
+          <p>By: {{ comment.username || 'Anonymous' }}</p>
+          <p>Post: {{ comment.post?.title || 'None' }}</p>
+          <button mat-icon-button (click)="editComment(comment)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteComment(comment.id)" [disabled]="!comment.id">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+        <div *ngIf="editingComment && editingComment.id === comment.id">
+          <mat-form-field>
+            <mat-label>Content</mat-label>
+            <textarea matInput [(ngModel)]="editingComment.content" placeholder="Content" required></textarea>
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Username</mat-label>
+            <input matInput [(ngModel)]="editingComment.username" placeholder="Username">
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>Select Post</mat-label>
+            <mat-select [(ngModel)]="selectedPostId" required>
+              <mat-option value="">Select Post</mat-option>
+              <mat-option *ngFor="let post of posts" [value]="post.id">{{ post.title }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button mat-raised-button color="primary" (click)="updateComment()" [disabled]="!selectedPostId || !editingComment.content">Save</button>
+          <button mat-raised-button (click)="cancelEdit()">Cancel</button>
+        </div>
+      </li>
+    </ul>
+  </mat-card-content>
+</mat-card>
