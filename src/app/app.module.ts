@@ -28,6 +28,12 @@ import { EditEventComponent } from './Event/edit-event/edit-event.component';
 import { ShowEventAdminComponent } from './Event/show-event-admin/show-event-admin.component';
 import { PaymentCancelComponent } from './Event/payment-cancel/payment-cancel.component';
 import { PaymentSuccessComponent } from './Event/payment-success/payment-success.component';
+import { LivreurListComponent } from './livraison/Components/Livreur/livreur-list/livreur-list.component';
+import { LivreurDetailComponent } from './livraison/Components/Livreur/livreur-detail/livreur-detail.component';
+import { LivreurFormComponent } from './livraison/Components/Livreur/livreur-form/livreur-form.component';
+import { LivraisonListComponent } from './livraison/Components/Livraison/livraison-list/livraison-list.component';
+import { LivraisonDetailComponent } from './livraison/Components/Livraison/livraison-detail/livraison-detail.component';
+import { LivraisonFormComponent } from './livraison/Components/Livraison/livraison-form/livraison-form.component';
 
 
 const routes: Routes = [
@@ -45,7 +51,14 @@ const routes: Routes = [
     ShowEventAdminComponent,
     EditEventComponent,
     PaymentSuccessComponent,
-    PaymentCancelComponent],
+    PaymentCancelComponent,
+    LivreurListComponent,
+    LivreurDetailComponent,
+    LivreurFormComponent,
+    LivraisonListComponent,
+    LivraisonDetailComponent,
+    LivraisonFormComponent
+  ],
     
   imports: [
     BrowserModule,

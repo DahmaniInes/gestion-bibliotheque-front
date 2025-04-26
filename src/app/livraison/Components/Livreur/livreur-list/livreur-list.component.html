@@ -1,0 +1,30 @@
+<div class="container">
+  <h2>Liste des Livreurs</h2>
+  <button class="btn btn-primary mb-3" (click)="addLivreur()">Ajouter un Livreur</button>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Téléphone</th>
+        <th>Email</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let livreur of livreurs">
+        <td>{{ livreur.id }}</td>
+        <td>{{ livreur.nom }}</td>
+        <td>{{ livreur.prenom }}</td>
+        <td>{{ livreur.telephone }}</td>
+        <td>{{ livreur.email }}</td>
+        <td>
+          <button class="btn btn-info btn-sm me-2" (click)="viewDetails(livreur.id)">Détails</button>
+          <button class="btn btn-warning btn-sm me-2" (click)="editLivreur(livreur.id)">Modifier</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteLivreur(livreur.id)">Supprimer</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

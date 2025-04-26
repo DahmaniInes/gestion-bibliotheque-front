@@ -1,0 +1,47 @@
+<div class="container">
+  <h2>Liste des Livraisons</h2>
+  <div class="mb-3">
+    <button class="btn btn-primary" (click)="addLivraison()">Ajouter une Livraison</button>
+  </div>
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Date de Livraison</th>
+        <th>Commande ID</th>
+        <th>Adresse</th>
+        <th>Téléphone Client</th>
+        <th>Méthode de Paiement</th>
+        <th>Prix Total</th>
+        <th>Livreur</th>
+        <th>État</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let livraison of livraisons">
+        <td>{{ livraison.id }}</td>
+        <td>{{ livraison.dateLivraison | date:'medium' }}</td>
+        <td>{{ livraison.commandeId }}</td>
+        <td>{{ livraison.adresseLivraison }}</td>
+        <td>{{ livraison.telephoneClient }}</td>
+        <td>{{ livraison.methodePaiement }}</td>
+        <td>{{ livraison.prixTotal | currency:'EUR' }}</td>
+        <td>{{ livraison.livreur }}</td>
+        <td>{{ getEtatLivraisonLibelle(livraison.etatLivraison) }}</td>
+        <td>
+          <button class="btn btn-info btn-sm me-2" (click)="viewDetails(livraison.id)">Détails</button>
+          <button class="btn btn-danger btn-sm" (click)="deleteLivraison(livraison.id)">Supprimer</button>
+        </td>
+      </tr>
+      <tr *ngIf="livraisons.length === 0">
+        <td colspan="10" class="text-center">Aucune livraison trouvée.</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button class="btn btn-secondary" (click)="changePage(page - 1)" [disabled]="page === 0">Précédent</button>
+    <span class="mx-3">Page {{ page + 1 }} sur {{ totalPages }}</span>
+    <button class="btn btn-secondary" (click)="changePage(page + 1)" [disabled]="page === totalPages - 1">Suivant</button>
+  </div>
+</div>

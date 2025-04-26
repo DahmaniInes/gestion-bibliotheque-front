@@ -13,6 +13,13 @@ import { EditEventComponent } from './Event/edit-event/edit-event.component';
 import { PaymentSuccessComponent } from './Event/payment-success/payment-success.component';
 import { PaymentCancelComponent } from './Event/payment-cancel/payment-cancel.component';
 import { ShowAllEventsComponent } from './Event/show-all-events/show-all-events.component';
+import { LivreurListComponent } from './livraison/Components/Livreur/livreur-list/livreur-list.component';
+import { LivreurFormComponent } from './livraison/Components/Livreur/livreur-form/livreur-form.component';
+import { LivreurDetailComponent } from './livraison/Components/Livreur/livreur-detail/livreur-detail.component';
+import { LivraisonListComponent } from './livraison/Components/Livraison/livraison-list/livraison-list.component';
+import { LivraisonFormComponent } from './livraison/Components/Livraison/livraison-form/livraison-form.component';
+import { LivraisonDetailComponent } from './livraison/Components/Livraison/livraison-detail/livraison-detail.component';
+
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -30,7 +37,13 @@ const routes: Routes = [
   { path: 'edit-event/:id', component: EditEventComponent },
   { path: 'payment/success', component:   PaymentSuccessComponent},
   { path: 'payment/cancel', component: PaymentCancelComponent },
+  { path: 'livreurs', component: LivreurListComponent },
+  { path: 'livreurs/form', component: LivreurFormComponent },
+  { path: 'livreurs/:id', component: LivreurDetailComponent },
 
+  { path: 'livraisons', component: LivraisonListComponent },
+  { path: 'livraisons/form', component: LivraisonFormComponent },
+  { path: 'livraisons/:id', component: LivraisonDetailComponent },
 
 
   { path: '**', redirectTo: '' }
